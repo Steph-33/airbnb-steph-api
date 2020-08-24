@@ -2,7 +2,8 @@ const models = require('../models');
 
 module.exports = {
   addPlace: (req, res, userSession) => {
-    console.log(userSession);
+    console.log('userSession', userSession);
+    console.log('req.body', req);
     const place = {
       title: req.body.title,
       description: req.body.description,
@@ -27,7 +28,7 @@ module.exports = {
     })
       .then((placeFounded) => {
         if (!placeFounded) {
-          console.log(placeFounded);
+          console.log('placeFounded', placeFounded);
           const newPlace = models.Place.create({
             title: req.body.title,
             description: req.body.description,
@@ -39,10 +40,12 @@ module.exports = {
             city_id: req.body.city_id,
             host_id: userSession.id,
           }).then((newPlace) => {
+            console.log('newPlace', newPlace);
             models.City.findOne({
               where: { id: req.body.city_id },
             })
               .then((cityFounded) => {
+                console.log('cityFounded', cityFounded);
                 return res
                   .status(201)
                   .json({
@@ -155,7 +158,7 @@ module.exports = {
       ],
       // raw: true,
     }).then((places) => {
-      console.log(places[0].City);
+      // console.log(places[0].City);
       res.status(201).json(places);
     });
   },

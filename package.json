@@ -5,11 +5,16 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "start:watch": "nodemon server.js"
+    "start:watch": "nodemon server.js",
+    "test": "mocha ./**/*.spec.js"
+  },
+  "engines": {
+    "node": "10.x"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "chai": "^4.2.0",
     "eslint": "^7.2.0",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-node": "^4.1.0",
@@ -20,7 +25,11 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.20.1",
     "eslint-plugin-react-hooks": "^4.0.0",
-    "prettier": "^2.0.5"
+    "mocha": "^8.1.1",
+    "node-mocks-http": "^1.8.1",
+    "nyc": "^15.1.0",
+    "prettier": "^2.0.5",
+    "sinon": "^9.0.3"
   },
   "dependencies": {
     "bcrypt": "^5.0.0",
@@ -31,6 +40,8 @@
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",
     "mysql2": "^2.1.0",
-    "sequelize": "^6.2.3"
+    "pg": "^8.3.2",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^6.3.4"
   }
 }

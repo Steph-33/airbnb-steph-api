@@ -1,26 +1,26 @@
 {
   "development": {
     "username": "root",
-    "password": "root",
+    "password": "Girondins33!",
     "database": "airbnb_development",
     "host": "localhost",
     "dialect": "mysql",
-    "port": 8889
+    "port": 3306
   },
   "test": {
     "username": "root",
-    "password": "root!",
+    "password": "Girondins33!",
     "database": "airbnb_test",
     "host": "localhost",
     "dialect": "mysql",
-    "port": 8889
+    "port": 3306
   },
   "production": {
     "username": "root",
-    "password": "root!",
+    "password": "Girondins33!",
     "database": "airbnb_production",
     "host": "localhost",
-    "dialect": "mysql",
-    "port": 8889
+    "dialect": "postgres",
+    "port": 3306
   }
 }
