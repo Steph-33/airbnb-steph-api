@@ -17,10 +17,10 @@ router.get('/', cors(), (req, res) => {
   });
 });
 
-router.use('*', (req, res) => {
-  res.status(404).json({
-    error: 'Erreur 404 ❌',
-  });
-});
+// router.use('*', (req, res) => {
+//   res.status(404).json({
+//     error: 'Erreur 404 ❌',
+//   });
+// });
 
 module.exports = router;

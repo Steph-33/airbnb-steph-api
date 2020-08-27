@@ -7,6 +7,8 @@ const router = require('./routes');
 
 const server = express();
 
+const { notFoundHandler, errorLogger, errorHandler } = require('./middlewares');
+
 server.use(cors());
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
@@ -15,6 +17,10 @@ server.use(bodyParser.json());
 server.use(morgan('dev'));
 
 server.use('/api', router);
+
+server.use('*', notFoundHandler);
+server.use(errorLogger);
+server.use(errorHandler);
 
 // Écoute du serveur sur le port 8000 "http://locahost:8000"
 const PORT = 8000;

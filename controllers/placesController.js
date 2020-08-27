@@ -1,7 +1,12 @@
 const models = require('../models');
+const express = require('express');
+require('express-async-errors');
+
+const NotFoundError = require('../utils/errors/not_found_error');
+const BadRequest = require('../utils/errors/bad_request');
 
 module.exports = {
-  addPlace: (req, res, userSession) => {
+  addPlace: async (req, res, userSession) => {
     console.log('userSession', userSession);
     console.log('req.body', req);
     const place = {
@@ -20,70 +25,69 @@ module.exports = {
         return res.status(400).json({
           error: `Le champs ${key} n'est pas renseigné ❌`,
         });
+        // throw new BadRequest(
+        //   'Mauvaise Requête',
+        //   `Le champs ${key} n'est pas renseigné ❌`
+        // );
       }
     }
-    models.Place.findOne({
+    const placeFounded = await models.Place.findOne({
       attributes: ['title'],
       where: { title: place.title },
-    })
-      .then((placeFounded) => {
-        if (!placeFounded) {
-          console.log('placeFounded', placeFounded);
-          const newPlace = models.Place.create({
-            title: req.body.title,
-            description: req.body.description,
-            rooms: req.body.rooms,
-            bathrooms: req.body.bathrooms,
-            max_guests: req.body.max_guests,
-            price_by_night: req.body.price_by_night,
-            image: req.body.image,
-            city_id: req.body.city_id,
-            host_id: userSession.id,
-          }).then((newPlace) => {
-            console.log('newPlace', newPlace);
-            models.City.findOne({
-              where: { id: req.body.city_id },
-            })
-              .then((cityFounded) => {
-                console.log('cityFounded', cityFounded);
-                return res
-                  .status(201)
-                  .json({
-                    id: newPlace.id,
-                    city: cityFounded.name,
-                    title: newPlace.title,
-                    description: newPlace.description,
-                    rooms: newPlace.rooms,
-                    bathrooms: newPlace.bathrooms,
-                    max_guests: newPlace.max_guests,
-                    price_by_night: newPlace.price_by_night,
-                    image: newPlace.image,
-                  })
-                  .catch((err) => {
-                    res.status(400).json({
-                      error: 'Aucune ville retrouvé à cet id ❌',
-                    });
-                  });
-              })
-              .catch((err) => {
-                return res.status(401).json({
-                  error: "Impossible d'ajouter un(e) appartement/maison ❌",
-                });
-              });
+    });
+    // .then((placeFounded) => {
+    if (!placeFounded) {
+      console.log('placeFounded', placeFounded);
+      const newPlace = await models.Place.create({
+        title: req.body.title,
+        description: req.body.description,
+        rooms: req.body.rooms,
+        bathrooms: req.body.bathrooms,
+        max_guests: req.body.max_guests,
+        price_by_night: req.body.price_by_night,
+        image: req.body.image,
+        city_id: req.body.city_id,
+        host_id: userSession.id,
+      });
+      if (newPlace) {
+        console.log('newPlace', newPlace);
+        const cityFounded = await models.City.findOne({
+          where: { id: req.body.city_id },
+        });
+        if (cityFounded) {
+          console.log('cityFounded', cityFounded);
+          return res.status(201).json({
+            id: newPlace.id,
+            city: cityFounded.name,
+            title: newPlace.title,
+            description: newPlace.description,
+            rooms: newPlace.rooms,
+            bathrooms: newPlace.bathrooms,
+            max_guests: newPlace.max_guests,
+            price_by_night: newPlace.price_by_night,
+            image: newPlace.image,
           });
         } else {
-          return res.status(400).json({
-            error:
-              "Un appartement existe déjà avec un titre d'annonce similaire ❌",
+          res.status(400).json({
+            error: 'Aucune ville retrouvé à cet id ❌',
           });
         }
-      })
-      .catch((err) => {
-        return res.status(500).json({
-          error:
-            "Il semble y avoir une erreur lors de la création de l'annonce ❌",
+      } else {
+        return res.status(401).json({
+          error: "Impossible d'ajouter un(e) appartement/maison ❌",
         });
-      });
+      }
+    } else {
+      // return res.status(400).json({
+      //   error:
+      //     "Un appartement existe déjà avec un titre d'annonce similaire ❌",
+      // });
+      console.log('pipi');
+      throw new BadRequest(
+        'Mauvaise Requête',
+        "Un appartement existe déjà avec un titre d'annonce similaire ❌"
+      );
+    }
   },
   getPlaceById: (req, res) => {
     models.Place.findOne({
@@ -122,6 +126,10 @@ module.exports = {
             res.status(404).json({
               error: "Aucun appartement n'as été trouvé avec cet id ❌",
             });
+            // throw new NotFoundError(
+            //   'Ressource introuvable',
+            //   "Aucun appartement n'as été trouvé avec cet id ❌"
+            // );
           })
           .catch((err) => {
             return res.status(404).json({
@@ -135,6 +143,10 @@ module.exports = {
           error:
             "Il y'a eu une erreur lors de la recherche de l'appartement via l'id ❌",
         });
+        // throw new NotFoundError(
+        //   'Ressource introuvable',
+        //   "Aucun appartement n'as été trouvé avec cet id ❌"
+        // );
       });
   },
   getAllPlaces: (req, res) => {

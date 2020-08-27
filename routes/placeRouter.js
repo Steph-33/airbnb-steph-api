@@ -2,6 +2,7 @@ const express = require('express');
 const authController = require('../controllers/authController');
 const placeController = require('../controllers/placesController');
 const jwtUtils = require('../utils/jwt.utils');
+require('express-async-errors');
 
 const placesRouter = express.Router();
 
